@@ -30,6 +30,8 @@ A modern, interactive buffer/session manager for Neovim. Effortlessly view, swit
 
 ## Installation
 
+### Using a Package Manager
+
 Using [packer.nvim](https://github.com/wbthomason/packer.nvim):
 
 ```lua
@@ -54,6 +56,73 @@ return {
     "ibhagwan/fzf-lua",            -- optional
   }
 }
+```
+
+### Manual Installation (Linux/macOS)
+
+If you don't use a package manager, you can install buffer-manager.nvim manually:
+
+1. Clone the repository:
+
+```bash
+git clone https://github.com/xsoder/buffer-manager.nvim ~/.config/nvim/pack/plugins/start/buffer-manager.nvim
+```
+
+2. Install dependencies (if not already installed):
+
+```bash
+# Install Telescope
+git clone https://github.com/nvim-telescope/telescope.nvim ~/.config/nvim/pack/plugins/start/telescope.nvim
+
+# Optional: Install devicons
+git clone https://github.com/nvim-tree/nvim-web-devicons ~/.config/nvim/pack/plugins/start/nvim-web-devicons
+
+# Optional: Install fzf-lua
+git clone https://github.com/ibhagwan/fzf-lua ~/.config/nvim/pack/plugins/start/fzf-lua
+```
+
+### Manual Installation (Windows)
+
+On Windows, you can install buffer-manager.nvim manually using PowerShell:
+
+1. Clone the repository:
+
+```powershell
+# First, determine your Neovim config path
+$ConfigPath = "$env:LOCALAPPDATA\nvim"
+# Or if using the older location: $ConfigPath = "$HOME\AppData\Local\nvim"
+
+# Create the plugins directory if it doesn't exist
+$PluginsPath = "$ConfigPath\pack\plugins\start"
+New-Item -ItemType Directory -Force -Path $PluginsPath
+
+# Clone the repository
+git clone https://github.com/xsoder/buffer-manager.nvim "$PluginsPath\buffer-manager.nvim"
+```
+
+2. Install dependencies (if not already installed):
+
+```powershell
+# Install Telescope
+git clone https://github.com/nvim-telescope/telescope.nvim "$PluginsPath\telescope.nvim"
+
+# Optional: Install devicons
+git clone https://github.com/nvim-tree/nvim-web-devicons "$PluginsPath\nvim-web-devicons"
+
+# Optional: Install fzf-lua
+git clone https://github.com/ibhagwan/fzf-lua "$PluginsPath\fzf-lua"
+```
+
+### Setup in init.lua
+
+After installation, add the plugin to your init.lua:
+
+```lua
+-- Load and configure buffer-manager
+require("buffer-manager").setup({
+  -- Your configuration options here (see Configuration section)
+  -- Or use default settings by not passing any options
+})
 ```
 
 ---
@@ -108,7 +177,7 @@ require("buffer-manager").setup({
   style = {
     numbers = "ordinal", -- or "none"
     modified_icon = "●",
-    current_icon = "",
+    current_icon = "",
     path_style = "shorten", -- "filename", "relative", "absolute", "shorten"
   },
   mappings = {
