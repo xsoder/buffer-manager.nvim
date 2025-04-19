@@ -1,13 +1,15 @@
 local M = {}
 
 -- Function to get cross-platform data directory
+local utils = require("buffer-manager.utils")
+
 local function get_data_dir()
     local data_dir = vim.fn.stdpath("data")
-    -- Ensure proper trailing slash
-    if data_dir:sub(-1) ~= "/" and data_dir:sub(-1) ~= "\\" then
-        data_dir = data_dir .. "/"
+    local sep = package.config:sub(1,1)
+    if data_dir:sub(-1) ~= sep then
+        data_dir = data_dir .. sep
     end
-    return data_dir
+    return utils.normalize_path(data_dir)
 end
 
 M.options = {

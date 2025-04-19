@@ -1,11 +1,19 @@
 local M = {}
 local config = require("buffer-manager.config").options
+local utils = require("buffer-manager.utils")
 
 -- Cross-platform path handling
 function M.get_session_path()
     local cwd = vim.fn.getcwd():gsub("[^%w%-_]", "_")
-    -- Use vim.fn.fnamemodify to normalize path (works on all platforms)
-    return vim.fn.fnamemodify(config.sessions.session_dir .. "/" .. cwd .. "_" .. config.sessions.session_file, ":p")
+    -- Build the session path using the OS separator and normalize
+    local sep = package.config:sub(1,1)
+    local session_dir = config.sessions.session_dir
+    if session_dir:sub(-1) ~= sep then
+        session_dir = session_dir .. sep
+    end
+    local session_path = session_dir .. cwd .. "_" .. config.sessions.session_file
+    -- Normalize to forward slashes for Neovim and Windows compatibility
+    return utils.normalize_path(vim.fn.fnamemodify(session_path, ":p"))
 end
 
 function M.save_session()
@@ -31,9 +39,11 @@ function M.save_session()
     end
 
     -- Make sure parent directory exists
-    vim.fn.mkdir(vim.fn.fnamemodify(M.get_session_path(), ":h"), "p")
-
     local session_file_path = M.get_session_path()
+    local session_dir = vim.fn.fnamemodify(session_file_path, ":h")
+    vim.fn.mkdir(session_dir, "p")
+
+    -- Open the session file with normalized path
     local session_file = io.open(session_file_path, "w")
     if session_file then
         session_file:write(vim.json.encode(buffers))

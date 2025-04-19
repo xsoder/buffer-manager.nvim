@@ -65,10 +65,10 @@ end
 
 -- Cross-platform path normalization
 function M.normalize_path(path)
-    -- Convert backslashes to forward slashes on Windows
-    if config.platform.is_windows then
-        return path:gsub("\\", "/")
-    end
+    -- Always convert backslashes to forward slashes for consistency
+    path = path:gsub("\\", "/")
+    -- Collapse any double slashes (except for protocol identifiers)
+    path = path:gsub("([^:])/+", "%1/")
     return path
 end
 
