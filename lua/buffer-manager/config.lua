@@ -3,12 +3,13 @@ local M = {}
 -- Function to get cross-platform data directory
 local function get_data_dir()
     local data_dir = vim.fn.stdpath("data")
-    local sep = package.config:sub(1,1)
-    if data_dir:sub(-1) ~= sep then
-        data_dir = data_dir .. sep
+    -- Always use / as separator for Neovim paths
+    if data_dir:sub(-1) ~= "/" then
+        data_dir = data_dir .. "/"
     end
-    -- Inline normalize_path logic
+    -- Convert any backslashes to forward slashes (for Windows)
     data_dir = data_dir:gsub("\\", "/")
+    -- Remove duplicate slashes except after drive letter (C:/)
     data_dir = data_dir:gsub("([^:])/+", "%1/")
     return data_dir
 end
