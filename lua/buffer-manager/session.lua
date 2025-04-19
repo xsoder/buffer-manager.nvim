@@ -79,8 +79,7 @@ function M.load_session()
     end
 
     for _, buf in ipairs(decoded) do
-        -- Only open buffers with a valid, non-empty path that is readable
-        if buf.path and buf.path ~= "" and vim.fn.filereadable(buf.path) == 1 then
+        if vim.fn.filereadable(buf.path) == 1 then
             -- Use pcall for error handling
             pcall(function()
                 -- Use vim.cmd.edit for better cross-platform behavior
