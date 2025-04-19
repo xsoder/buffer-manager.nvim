@@ -6,12 +6,6 @@ A modern, interactive buffer/session manager for Neovim. Effortlessly view, swit
 
 ---
 
-## Demonstration
-
-![Demonstration](buffer-manager.mp4)
-
----
-
 ## Features
 
 - **Interactive Buffer Picker:** Quickly view, switch, and delete buffers in a searchable Telescope window.
