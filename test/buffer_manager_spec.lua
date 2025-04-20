@@ -1,7 +1,4 @@
--- buffer_manager_spec.lua
 package.path = package.path .. ";./lua/?.lua;./lua/?/init.lua"
-
--- Minimal vim mock for busted
 if not _G.vim then
     _G.vim = {
         g = {},
