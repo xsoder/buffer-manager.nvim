@@ -1,6 +1,4 @@
 -- buffer_manager_spec.lua
--- Basic tests for buffer-manager.nvim using busted
-
 package.path = package.path .. ";./lua/?.lua;./lua/?/init.lua"
 
 -- Minimal vim mock for busted
