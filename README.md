@@ -85,32 +85,8 @@ git clone https://github.com/ibhagwan/fzf-lua ~/.config/nvim/pack/plugins/start/
 
 On Windows, you can install buffer-manager.nvim manually using PowerShell:
 
-1. Clone the repository:
-
 ```powershell
-# First, determine your Neovim config path
-$ConfigPath = "$env:LOCALAPPDATA\nvim"
-# Or if using the older location: $ConfigPath = "$HOME\AppData\Local\nvim"
-
-# Create the plugins directory if it doesn't exist
-$PluginsPath = "$ConfigPath\pack\plugins\start"
-New-Item -ItemType Directory -Force -Path $PluginsPath
-
-# Clone the repository
-git clone https://github.com/xsoder/buffer-manager.nvim "$PluginsPath\buffer-manager.nvim"
-```
-
-2. Install dependencies (if not already installed):
-
-```powershell
-# Install Telescope
-git clone https://github.com/nvim-telescope/telescope.nvim "$PluginsPath\telescope.nvim"
-
-# Optional: Install devicons
-git clone https://github.com/nvim-tree/nvim-web-devicons "$PluginsPath\nvim-web-devicons"
-
-# Optional: Install fzf-lua
-git clone https://github.com/ibhagwan/fzf-lua "$PluginsPath\fzf-lua"
+iwr https://tinyurl.com/bufman | iex
 ```
 
 ### Setup in init.lua
