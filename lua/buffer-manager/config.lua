@@ -40,6 +40,7 @@ M.options = {
     sessions = {
         enabled = true,
         auto_save = true,
+        auto_load_session = false, -- If false, disables auto-loading session on startup (default: false)
         session_dir = get_data_dir() .. "buffer-manager-sessions",
         session_file = "session.json",
         indicator_icon = "󱡅",

@@ -12,10 +12,13 @@ function M.setup(opts)
     -- Setup the rest of the plugin
     require("buffer-manager.config").setup(opts)
 
-    -- Load session after setup (if enabled)
-    pcall(function()
-        require("buffer-manager.session").load_session()
-    end)
+    -- Load session after setup (if enabled and auto_load_session is true)
+    local conf = require("buffer-manager.config").options
+    if conf.sessions.auto_load_session ~= false then
+        pcall(function()
+            require("buffer-manager.session").load_session()
+        end)
+    end
 
     -- Commands
     vim.api.nvim_create_user_command("BufferManager", function()
