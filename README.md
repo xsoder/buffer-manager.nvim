@@ -39,7 +39,7 @@ use {
   "xsoder/buffer-manager.nvim",
   requires = {
     "nvim-telescope/telescope.nvim",
-    "nvim-tree/nvim-web-devicons", -- optional
+    "nvim-tree/nvim-web-devicons",
     "ibhagwan/fzf-lua",            -- optional
   }
 }
