@@ -1,3 +1,4 @@
+
 Write-host "Installing Buffer-manager.nvim....."
 
 $url = "https://github.com/xsoder/buffer-manager.nvim.git" 
