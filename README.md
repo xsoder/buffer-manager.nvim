@@ -1,4 +1,4 @@
-# buffer-manager.nvim
+# Buffer-manager.nvim
 
 A modern, interactive session manager for Neovim inspired by harpoon. Effortlessly view, switch, delete, and manage buffers and sessions with a beautiful UI powered by Telescope and optional FZF integration.
 ![Buffer Manager Screenshot](base.png)
@@ -60,7 +60,7 @@ return {
 
 ### Manual Installation (Linux/macOS)
 
-If you don't use a package manager, you can install buffer-manager.nvim manually:
+If you don't use a package manager, you can install it manually:
 
 1. Clone the repository:
 
