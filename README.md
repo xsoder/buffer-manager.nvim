@@ -1,4 +1,4 @@
-# Buffer-manager.nvim
+# Buffer manager.nvim
 
 A modern, interactive session manager for Neovim inspired by harpoon. Effortlessly view, switch, delete, and manage buffers and sessions with a beautiful UI powered by Telescope and optional FZF integration.
 ![Buffer Manager Screenshot](base.png)
