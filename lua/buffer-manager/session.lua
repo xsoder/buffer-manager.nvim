@@ -2,6 +2,9 @@ local M = {}
 local config = require("buffer-manager.config").options
 local utils = require("buffer-manager.utils")
 
+-- In-memory clipboard for yanked session
+M.session_clipboard = nil
+
 -- Cross-platform path handling
 function M.get_session_path()
     local cwd = vim.fn.getcwd():gsub("[^%w%-_]", "_")
@@ -51,6 +54,61 @@ function M.save_session()
     else
         vim.notify("Failed to save session to: " .. session_file_path, vim.log.levels.ERROR)
     end
+end
+
+-- Yank the current session to the clipboard
+function M.yank_session()
+    local buffers = {}
+    for _, bufnr in ipairs(vim.api.nvim_list_bufs()) do
+        local name = vim.api.nvim_buf_get_name(bufnr)
+        if name ~= "" and vim.fn.filereadable(name) == 1 then
+            local line = vim.api.nvim_buf_get_mark(bufnr, '"')[1]
+            local max_lines = vim.api.nvim_buf_line_count(bufnr)
+            if line > max_lines then
+                line = max_lines
+            end
+            table.insert(buffers, {
+                path = name,
+                line = line,
+            })
+        end
+    end
+    if #buffers > 0 then
+        M.session_clipboard = vim.deepcopy(buffers)
+        vim.notify("Session yanked!", vim.log.levels.INFO)
+    else
+        vim.notify("No buffers to yank.", vim.log.levels.WARN)
+    end
+end
+
+-- Paste (restore) the yanked session
+function M.paste_session()
+    if not M.session_clipboard or #M.session_clipboard == 0 then
+        vim.notify("No yanked session to paste.", vim.log.levels.WARN)
+        return
+    end
+    -- Optionally: wipe all listed buffers before restoring
+    for _, bufnr in ipairs(vim.api.nvim_list_bufs()) do
+        if vim.api.nvim_buf_is_valid(bufnr) and vim.api.nvim_buf_get_option(bufnr, "buflisted") then
+            pcall(vim.api.nvim_buf_delete, bufnr, { force = true })
+        end
+    end
+    -- Restore yanked buffers
+    for _, buf in ipairs(M.session_clipboard) do
+        if vim.fn.filereadable(buf.path) == 1 then
+            pcall(function()
+                vim.cmd.edit(vim.fn.fnameescape(buf.path))
+                local bufnr = vim.api.nvim_get_current_buf()
+                local max_lines = vim.api.nvim_buf_line_count(bufnr)
+                if buf.line > 0 and buf.line <= max_lines then
+                    vim.api.nvim_win_set_cursor(0, { buf.line, 0 })
+                else
+                    vim.api.nvim_win_set_cursor(0, { 1, 0 })
+                end
+            end)
+        end
+    end
+    vim.notify("Session pasted!", vim.log.levels.INFO)
 end
 
 function M.load_session()
@@ -136,5 +194,16 @@ vim.api.nvim_create_autocmd("VimLeavePre", {
         end
     end,
 })
+
+-- User commands for yank/paste session
+dofile = dofile or loadfile -- Lua 5.1 compatibility
+if vim and vim.api then
+    vim.api.nvim_create_user_command("BufferManagerYankSession", function()
+        require("buffer-manager.session").yank_session()
+    end, { desc = "Yank (copy) current buffer session" })
+    vim.api.nvim_create_user_command("BufferManagerPasteSession", function()
+        require("buffer-manager.session").paste_session()
+    end, { desc = "Paste (restore) yanked buffer session" })
+end
 
 return M

@@ -6,25 +6,31 @@ local action_state = require("telescope.actions.state")
 local themes = require("telescope.themes")
 local utils = require("buffer-manager.utils")
 local config = require("buffer-manager.config").options
+local pin = require("buffer-manager.pin")
 
 function M.create_buffer_entry(entry)
     local cursor_pos = vim.api.nvim_buf_get_mark(entry.bufnr, '"')[1]
     local is_modified = vim.api.nvim_buf_get_option(entry.bufnr, "modified")
     local icon = utils.get_icon(entry.bufnr)
     local in_session = require("buffer-manager.session").is_in_session(entry.bufnr)
+    local is_pinned = pin.is_pinned(entry.bufnr)
+    local pin_icon = is_pinned and "📌 " or ""
 
     return {
         value = entry.name,
         display = string.format(
-            "%s%s%d: %s%s",
+            "%s%s%s%s%d: %s%s",
+            pin_icon,
             icon,
             in_session and config.sessions.indicator_icon .. " " or "",
+            is_pinned and "" or "",
             cursor_pos,
             utils.format_path(entry.name),
             is_modified and " [+]" or ""
         ),
         ordinal = entry.name,
         bufnr = entry.bufnr,
+        is_pinned = is_pinned,
     }
 end
 
@@ -32,16 +38,33 @@ function M.open(opts)
     opts = opts or {}
     local buffers = {}
 
-    -- Collect current valid buffers
-    for _, bufnr in ipairs(vim.api.nvim_list_bufs()) do
+    -- Get pinned buffers first (in order)
+    local pinned = {}
+    for _, bufnr in ipairs(pin.get_pinned_buffers()) do
         if utils.is_valid_buffer(bufnr) then
             local name = vim.api.nvim_buf_get_name(bufnr)
-            table.insert(buffers, {
+            table.insert(pinned, {
                 bufnr = bufnr,
                 name = name ~= "" and name or "[No Name]",
+                pinned = true,
             })
         end
     end
+    -- Get unpinned buffers
+    local unpinned = {}
+    for _, bufnr in ipairs(vim.api.nvim_list_bufs()) do
+        if utils.is_valid_buffer(bufnr) and not pin.is_pinned(bufnr) then
+            local name = vim.api.nvim_buf_get_name(bufnr)
+            table.insert(unpinned, {
+                bufnr = bufnr,
+                name = name ~= "" and name or "[No Name]",
+                pinned = false,
+            })
+        end
+    end
+    -- Concatenate pinned + unpinned
+    for _, buf in ipairs(pinned) do table.insert(buffers, buf) end
+    for _, buf in ipairs(unpinned) do table.insert(buffers, buf) end
 
     local function delete_and_refresh(bufnr, force, prompt_bufnr)
         vim.schedule(function()
@@ -118,6 +141,56 @@ function M.open(opts)
                     map("i", "<C-D>", confirm_delete(true))
                     map("n", "dd", confirm_delete(false))
                     map("n", "dD", confirm_delete(true))
+
+                    -- Pin/unpin buffer
+                    map("n", "p", function()
+                        local selection = action_state.get_selected_entry()
+                        if selection then
+                            pin.toggle_pin(selection.bufnr)
+                            actions.close(prompt_bufnr)
+                            vim.defer_fn(function() M.open(opts) end, 50)
+                        end
+                    end)
+                    -- Move pinned buffer up
+                    map("n", "K", function()
+                        local selection = action_state.get_selected_entry()
+                        if selection and pin.is_pinned(selection.bufnr) then
+                            local pins = pin.get_pinned_buffers()
+                            for i, v in ipairs(pins) do
+                                if v == selection.bufnr and i > 1 then
+                                    pin.move_pinned_buffer(selection.bufnr, i-1)
+                                    break
+                                end
+                            end
+                            actions.close(prompt_bufnr)
+                            vim.defer_fn(function() M.open(opts) end, 50)
+                        end
+                    end)
+                    -- Move pinned buffer down
+                    map("n", "J", function()
+                        local selection = action_state.get_selected_entry()
+                        if selection and pin.is_pinned(selection.bufnr) then
+                            local pins = pin.get_pinned_buffers()
+                            for i, v in ipairs(pins) do
+                                if v == selection.bufnr and i < #pins then
+                                    pin.move_pinned_buffer(selection.bufnr, i+1)
+                                    break
+                                end
+                            end
+                            actions.close(prompt_bufnr)
+                            vim.defer_fn(function() M.open(opts) end, 50)
+                        end
+                    end)
+
+                    -- Yank session (copy all buffers)
+                    map("n", "Y", function()
+                        require("buffer-manager.session").yank_session()
+                    end)
+                    -- Paste session (restore yanked buffers)
+                    map("n", "P", function()
+                        require("buffer-manager.session").paste_session()
+                        actions.close(prompt_bufnr)
+                    end)
 
                     return true
                 end,
