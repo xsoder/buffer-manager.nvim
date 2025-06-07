@@ -1,6 +1,6 @@
 # Buffer manager.nvim
 
-A modern, interactive session manager for Neovim inspired by harpoon. Effortlessly view, switch, delete, and manage buffers and sessions with a beautiful UI powered by Telescope and optional FZF integration.
+A modern, interactive session manager for Neovim inspired by harpoon by ThePrimeAgen. Effortlessly view, switch, delete, and manage buffers and sessions with a beautiful UI powered by Telescope and optional FZF integration.
 ![Buffer Manager Screenshot](base.png)
 ![Bugger Manager Screenshot](help.png)
 
@@ -25,20 +25,6 @@ A modern, interactive session manager for Neovim inspired by harpoon. Effortless
 - (Optional) [nvim-tree/nvim-web-devicons](https://github.com/nvim-tree/nvim-web-devicons) for file icons
 - (Optional) [ibhagwan/fzf-lua](https://github.com/ibhagwan/fzf-lua) for FZF integration
 - (Optional) [gokcehan/lf](https://github.com/gokcehan/lf) for advanced previews
-
----
-
-## Installation
-
-### Using a Package Manager
-
-Using [packer.nvim](https://github.com/wbthomason/packer.nvim):
-
-```lua
-use {
-  "xsoder/buffer-manager.nvim",
-  requires = {
-    "nvim-telescope/telescope.nvim",
     "nvim-tree/nvim-web-devicons",
     "ibhagwan/fzf-lua",            -- optional
   }
