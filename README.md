@@ -4,6 +4,8 @@ A modern, interactive session manager for Neovim inspired by harpoon by ThePrime
 ![Buffer Manager Screenshot](base.png)
 ![Bugger Manager Screenshot](help.png)
 
+![NOTE]
+> This will not work for windows Do not use it on windows if you even want a windows version rok it and mainatin it. I am not going to do it.
 ---
 
 ## Features
